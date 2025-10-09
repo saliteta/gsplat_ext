@@ -1,0 +1,10 @@
+/build
+/gsplat_ext.egg-info
+/exported_gaussian_id
+/3dgs
+/2dgs
+/.vscode
+__pycache__/
+*.py[cod]
+*$py.class
+/gsplat_ext/csrc.so

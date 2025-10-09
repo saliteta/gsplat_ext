@@ -1,0 +1,3 @@
+[submodule "gsplat_ext/cuda/csrc/third_party/glm"]
+	path = gsplat_ext/cuda/csrc/third_party/glm
+	url = https://github.com/g-truc/glm.git
