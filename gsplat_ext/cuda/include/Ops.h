@@ -111,4 +111,7 @@ reverse_rasterize_to_gaussians_dbs(
     const at::Tensor &flatten_ids
 );
 
+std::tuple<at::Tensor, at::Tensor>
+covar_to_quat_scale(const at::Tensor& covars);
+
 } // namespace gsplat_ext
