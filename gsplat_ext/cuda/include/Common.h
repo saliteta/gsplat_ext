@@ -3,6 +3,20 @@
 #include <algorithm>
 #include <cstdint>
 #include <glm/gtc/type_ptr.hpp>
+#include <cuda_runtime.h>
+#include <torch/extension.h>  // for TORCH_CHECK
+
+#ifndef CUDA_CHECK
+#define CUDA_CHECK(expr)                                                        \
+    do {                                                                        \
+        cudaError_t _err = (expr);                                              \
+        if (_err != cudaSuccess) {                                              \
+            TORCH_CHECK(false, "CUDA error ", static_cast<int>(_err), " (",     \
+                        cudaGetErrorString(_err), ") at ", __FILE__, ":",       \
+                        __LINE__);                                              \
+        }                                                                       \
+    } while (0)
+#endif
 
 namespace gsplat_ext {
 
