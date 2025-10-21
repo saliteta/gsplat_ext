@@ -12,6 +12,8 @@ from .utils.text_encoder import *
 from .utils.viewer import *
 from .stratgy.feature import *
 from .helpers import covar_to_quat_scale
+from .utils.hierachical_viewer import HierachicalViewer, HierachicalViewerState
+from .utils.hierachical_primitive import HierachicalPrimitive
 __all__ = [
     "inverse_rasterization_2dgs",
     "inverse_rasterization_3dgs",
@@ -19,4 +21,7 @@ __all__ = [
     "Parser",
     "Dataset",
     "covar_to_quat_scale",
+    "HierachicalViewer",
+    "HierachicalViewerState",
+    "HierachicalPrimitive",
 ]
