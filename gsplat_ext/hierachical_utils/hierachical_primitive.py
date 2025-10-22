@@ -1,6 +1,6 @@
 
-from gsplat_ext.utils.primitives import GaussianPrimitive
-from gsplat_ext.utils.renderer import GaussianRenderer
+from ..utils.primitives import GaussianPrimitive
+from ..utils.renderer import GaussianRenderer
 import torch
 from typing import Union, Dict, List
 
@@ -91,3 +91,55 @@ class HierachicalPrimitive:
                 None
         """
         self.source = torch.load(file_path)
+
+    def to(self, device: torch.device):
+        """
+            Args:
+                device: torch.device, the device to move the hierachical primitive to
+            Returns:
+                None
+        """
+        self.source["geometry"] = [tensor.to(device) for tensor in self.source["geometry"]]
+        self.source["color"] = [tensor.to(device) for tensor in self.source["color"]]
+        if self.with_feature:
+            self.source["feature"] = [tensor.to(device) for tensor in self.source["feature"]]
+        return self
+    
+    def copy_to(self, device: torch.device)-> "HierachicalPrimitive":
+        """
+            Args:
+                device: torch.device, the device to copy the hierachical primitive to
+            Returns:
+                HierachicalPrimitive, the copied hierachical primitive
+        """
+        new_hierachical_primitive = HierachicalPrimitive(with_feature=self.with_feature)
+        new_hierachical_primitive.source["geometry"] = [tensor.clone().to(device) if tensor is not None else None for tensor in self.source["geometry"]]
+        new_hierachical_primitive.source["color"] = [tensor.clone().to(device) if tensor is not None else None for tensor in self.source["color"]]
+        if self.with_feature:
+            new_hierachical_primitive.source["feature"] = [tensor.clone().to(device) if tensor is not None else None for tensor in self.source["feature"]]
+        return new_hierachical_primitive
+
+
+    def query_with_list_torch_index(self, index: List[torch.Tensor], invert_index: bool = True)-> "HierachicalPrimitive":
+        """
+            Args:
+                index: torch.Tensor, the index of the primitive to query
+            Returns:
+                HierachicalPrimitive, the queried hierachical primitive
+        """
+        # If invert_index is True, reverse the index list so that the indices are processed in reverse order (from back to front).
+        if invert_index:
+            index = list(reversed(index))
+        new_hierachical_primitive = HierachicalPrimitive(with_feature=self.with_feature)
+        for i in range(len(index)):
+            if index[i] is None:
+                new_hierachical_primitive.source["geometry"].append(None)
+                new_hierachical_primitive.source["color"].append(None)
+                if self.with_feature:
+                    new_hierachical_primitive.source["feature"].append(None)
+            else:
+                new_hierachical_primitive.source["geometry"].append(self.source["geometry"][i][index[i][0]: index[i][1]])
+                new_hierachical_primitive.source["color"].append(self.source["color"][i][index[i][0]: index[i][1]])
+                if self.with_feature:
+                    new_hierachical_primitive.source["feature"].append(self.source["feature"][i][index[i][0]: index[i][1]])
+        return new_hierachical_primitive

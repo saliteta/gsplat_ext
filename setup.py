@@ -103,7 +103,7 @@ def get_ext():
 
 setup(
     name="gsplat_ext",
-    version="0.5",
+    version="0.6",
     description=" Python package for reverse calculation of the weight of each Gaussian, including 2DGS, 3DGS, and BetaSplat \
         as well as feature visualization and attention map visualization, further adding ability \
             for hierachical Gaussian Splatting",
@@ -146,6 +146,7 @@ setup(
             "datasets/**/*",
             "utils/**/*",
             "stratgy/**/*",
+            "hierachical_utils/**/*",
         ]
     },
     include_package_data=True,
