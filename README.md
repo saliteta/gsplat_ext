@@ -5,6 +5,7 @@
 - First, install gsplat from [https://github.com/nerfstudio-project/gsplat](https://github.com/nerfstudio-project/gsplat)
 Then run
 ```
+git submodule update --init --recursive
 pip install .
 ```
 
