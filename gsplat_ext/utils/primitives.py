@@ -110,8 +110,8 @@ class Primitive(ABC):
         return "\n".join(output)
 
     @abstractmethod
-    def to(self, device: torch.device | str) -> None:
-        """Move the primitive to the device."""
+    def to(self, device: torch.device | str) -> 'Primitive':
+        """Return a copy of the primitive moved to the specified device."""
         pass
 
 
@@ -299,16 +299,35 @@ class GaussianPrimitive(Primitive):
             output.append(f"feature: {self.feature.shape}")
         return "\n".join(output)
 
-    def to(self, device: torch.device | str) -> None:
-        """Move the primitive to the device."""
+    def to(self, device: torch.device | str) -> 'GaussianPrimitive':
+        """Return a copy of the primitive moved to the device."""
+        # Create a copy of this instance
+        result = GaussianPrimitive()
+        result._geometry = {}
+        result._color = {}
+        result._source_data = self._source_data.copy()  # Shallow copy, keeps CPU data
+        
+        # Copy geometry tensors to the device
         for key, value in self._geometry.items():
             if isinstance(value, torch.Tensor):
-                self._geometry[key] = value.to(device)
-        for key, value in self.color.items():
+                result._geometry[key] = value.to(device)
+            else:
+                result._geometry[key] = value
+        
+        # Copy color tensors to the device
+        for key, value in self._color.items():
             if isinstance(value, torch.Tensor):
-                self._color[key] = value.to(device)
+                result._color[key] = value.to(device)
+            else:
+                result._color[key] = value
+        
+        # Copy feature to the device
         if self._feature is not None:
-            self._feature = self._feature.to(device)
+            result._feature = self._feature.to(device)
+        else:
+            result._feature = None
+        
+        return result
 
     def save(self, file_path: Union[str, Path]) -> None:
         """Save the primitive to a file."""
